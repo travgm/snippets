@@ -33,17 +33,18 @@ int
 main(void) {
   int i[9] = {1,2,2,3,6,7,8,9,20};
   int n;
+  char res;
 
   ctimer_t ct;
   ctimer_start(&ct);
 
-  while(scanf("%d", &n) != EOF) {
-    char res;
-    cilk_scope {
-      res = cilk_spawn bool_yn(bin_search(i, n));
+  cilk_scope {
+    while(scanf("%d", &n) != EOF) {
+        res = cilk_spawn bool_yn(bin_search(i, n));
+        printf("%02d in array = %c\n", n, res);
     }
-    printf("%02d in array = %c\n", n, res);
   }
+  cilk_sync;
 
   ctimer_stop(&ct);
   ctimer_measure(&ct);
