@@ -6,8 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <cilk/cilk.h>
-#include "ctimer.h"
+#include <stdatomic.h>
 
+#include "ctimer.h"
 #define bool_yn(x) (x > -1 ? 'y' : 'n')
 
 int
@@ -33,7 +34,7 @@ int
 main(void) {
   int i[9] = {1,2,2,3,6,7,8,9,20};
   int n;
-  char res;
+  _Atomic char res;
 
   ctimer_t ct;
   ctimer_start(&ct);
