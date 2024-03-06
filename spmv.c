@@ -1,9 +1,10 @@
 /*spmv.c
  * Sparse vector multiplication, The spmv() function is taken
- * from the performance engineering lectures at MIT. This just
- * shows an example of it's use, although in sparse vector
+ * from the performance engineering lectures at MIT and I have
+ * added parallel programming. This example is a very minimal
+ * usage of this function, and although in a sparse vector
  * multiplication the vector usually consists of mostly 0's, but
- * this example should suffice.
+ * this should suffice.
  * (C) Copyright 2024 Travis Montoya
  */
 #include <stdio.h>
