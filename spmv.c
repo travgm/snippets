@@ -8,6 +8,8 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <cilk/cilk.h>
+#include "ctimer.h"
 
 typedef struct {
   int n, nnz;
@@ -18,13 +20,16 @@ typedef struct {
 
 void 
 spmv(sparse_matrix_t *A, double *x, double *y) {
-  for (int i = 0; i < A->n; i++) {
-    y[i] = 0;
-    for (int k = A->rows[i]; k < A->rows[i+1]; k++) {
-      int j = A->cols[k];
-      y[i] += A->vals[k] * x[j];
+  cilk_scope {
+    cilk_spawn for (int i = 0; i < A->n; i++) {
+      y[i] = 0;
+      cilk_spawn for (int k = A->rows[i]; k < A->rows[i+1]; k++) {
+        int j = A->cols[k];
+        y[i] += A->vals[k] * x[j];
+      }
     }
   }
+  cilk_sync;
 }
 
 /* Begin test for example */
@@ -41,6 +46,9 @@ main(void) {
                    7.0, 2.0};
   int row[5] = {0,2,4,6,8};
   int col[8] = {0,1,0,1,0,1,0,1};
+  ctimer_t ct;
+  
+  ctimer_start(&ct);
 
   sparse_matrix_t *sm = malloc(sizeof(sparse_matrix_t));
   if (sm != NULL) {
@@ -55,9 +63,15 @@ main(void) {
 
   spmv(sm, inp, out);
 
+  ctimer_stop(&ct);
+  ctimer_measure(&ct);
+
   for(int i = 0; i < sm->n; i+=2) {
     printf("r/c = %02f/%02f\n",out[i], out[i+1]);
   }
+
+  ctimer_print(ct, "spmv");
+
   free(sm);
   return 0;
 }
