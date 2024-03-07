@@ -2,9 +2,7 @@
  * Sparse vector multiplication, The spmv() function is taken
  * from the performance engineering lectures at MIT and I have
  * added parallel programming. This example is a very minimal
- * usage of this function, and although in a sparse vector
- * multiplication the vector usually consists of mostly 0's, but
- * this should suffice.
+ * usage of this function.
  * (C) Copyright 2024 Travis Montoya
  */
 #include <stdio.h>
@@ -37,16 +35,15 @@ spmv(sparse_matrix_t *A, double *x, double *y) {
 int
 main(void) {
   double out[4];
-  double inp[8] = {6.3, 2.5, 
-                   8.5, 3.3, 
-                   1.0, 9.5, 
-                   3.1, 9.0};
-  double val[8] = {1.0, 3.0, 
-                   5.0, 8.0, 
-                   2.0, 5.0, 
-                   7.0, 2.0};
-  int row[5] = {0,2,4,6,8};
-  int col[8] = {0,1,0,1,0,1,0,1};
+  double inp[8] = {0.0, 2.5, 
+                   0.0, 0.0, 
+                   1.0, 0.0, 
+                   0.0, 0.0};
+  double val[4] = {6.3, 3.0, 
+                   8.5, 8.0};
+  int row[5] = {0, 2, 4, 4, 4};
+  int col[4] = {1, 0, 1, 0};
+
   ctimer_t ct;
   
   ctimer_start(&ct);
@@ -54,7 +51,7 @@ main(void) {
   sparse_matrix_t *sm = malloc(sizeof(sparse_matrix_t));
   if (sm != NULL) {
     sm->n = 4;
-    sm->nnz = 8;
+    sm->nnz = 4;
     sm->rows = row;
     sm->cols = col;
     sm->vals = val;
